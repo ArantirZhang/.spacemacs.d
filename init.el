@@ -46,7 +46,10 @@ values."
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
      helm
+     gtags
      (c-c++ :variables c-c++-enable-clang-support t)
+     ;; (auto-completion :variables
+                      ;; auto-completion-enable-snippets-in-popup t)
      auto-completion
      better-defaults
      emacs-lisp
@@ -544,8 +547,29 @@ you should place your code here."
   ;; (with-eval-after-load 'flycheckeck-objc-clang-setup))
 
   ;; flycheck setup
-  (defvar osx-base-path "/Applications/Xcode.app/Contents/Developer/Platforms/")
+  (global-company-mode t)
 
+  ;; (setq tab-always-indent 'complete)
+
+  ;; function to implement a smarter TAB (EmacsWiki)
+  (defun smart-tab ()
+    "This smart tab is minibuffer compliant: it acts as usual in
+    the minibuffer. Else, if mark is active, indents region. Else if
+    point is at the end of a symbol, expands it. Else indents the
+    current line."
+    (interactive)
+    (if (minibufferp)
+        (unless (minibuffer-complete)
+          (hippie-expand nil))
+      (if mark-active
+          (indent-region (region-beginning)
+                         (region-end))
+        (if (looking-at "\\_>")
+            (hippie-expand nil)
+          (indent-for-tab-command)))))
+  (global-set-key (kbd "TAB") 'smart-tab)
+
+  ;; (global-set-key (kbd "<C-tab>") 'yas-ido-expand)
 
   (defun setup-flycheck-clang-project-path ()
     (let ((root (ignore-errors (projectile-project-root))))
@@ -568,10 +592,10 @@ you should place your code here."
 
  '(org-agenda-files
    (quote
-    ("/Users/Arantir/Documents/Notes/org-mode.org" "/Users/Arantir/Documents/Notes/Edge_sdk.org" "/Users/Arantir/Documents/Notes/introduction.org" "/Users/Arantir/Documents/Notes/notes.org")) t)
+    ("/Users/Arantir/Documents/Notes/org-mode.org" "/Users/Arantir/Documents/Notes/Edge_sdk.org" "/Users/Arantir/Documents/Notes/introduction.org" "/Users/Arantir/Documents/Notes/notes.org")))
  '(package-selected-packages
    (quote
-    (swift-mode pdf-tools tablist engine-mode helm-dash dash-at-point flycheck-objc-clang winum unfill fuzzy rtags cmake-ide levenshtein org-projectile org-present org-pomodoro alert log4e gntp org-download htmlize gnuplot xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help cpputils-cmake dired+ yapfify yaml-mode ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tagedit spacemacs-theme spaceline smeargle slim-mode scss-mode sass-mode restart-emacs rainbow-delimiters quelpa pyvenv pytest pyenv-mode py-isort pug-mode popwin pip-requirements persp-mode pcre2el paradox orgit org-plus-contrib org-bullets open-junk-file neotree mwim move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode live-py-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc info+ indent-guide ido-vertical-mode hy-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md flycheck-pos-tip flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu emmet-mode elisp-slime-nav dumb-jump disaster define-word cython-mode company-web company-tern company-statistics company-emacs-eclim company-c-headers company-anaconda column-enforce-mode coffee-mode cmake-mode clean-aindent-mode clang-format auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell))))
+    (helm-gtags ggtags web-completion-data dash-functional swift-mode pdf-tools tablist engine-mode helm-dash dash-at-point flycheck-objc-clang winum unfill fuzzy rtags cmake-ide levenshtein org-projectile org-present org-pomodoro alert log4e gntp org-download htmlize gnuplot xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help cpputils-cmake dired+ yapfify yaml-mode ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tagedit spacemacs-theme spaceline smeargle slim-mode scss-mode sass-mode restart-emacs rainbow-delimiters quelpa pyvenv pytest pyenv-mode py-isort pug-mode popwin pip-requirements persp-mode pcre2el paradox orgit org-plus-contrib org-bullets open-junk-file neotree mwim move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode live-py-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc info+ indent-guide ido-vertical-mode hy-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md flycheck-pos-tip flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu emmet-mode elisp-slime-nav dumb-jump disaster define-word cython-mode company-web company-tern company-statistics company-emacs-eclim company-c-headers company-anaconda column-enforce-mode coffee-mode cmake-mode clean-aindent-mode clang-format auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
