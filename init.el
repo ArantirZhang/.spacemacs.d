@@ -47,7 +47,9 @@ values."
      ;; ----------------------------------------------------------------
      helm
      gtags
-     (c-c++ :variables c-c++-enable-clang-support t)
+     (c-c++ :variables
+            c-c++-default-mode-for-headers 'c++-mode
+            c-c++-enable-clang-support t)
      ;; (auto-completion :variables
                       ;; auto-completion-enable-snippets-in-popup t)
      auto-completion
@@ -64,6 +66,7 @@ values."
             shell-default-position 'bottom
             )
      ;; spell-checking
+     ;; (syntax-checking :variables syntax-checking-enable-by-default t)
      syntax-checking
      ;; version-control
      )
@@ -74,6 +77,7 @@ values."
    dotspacemacs-additional-packages '(
                                       dired+
                                       flycheck-objc-clang
+                                      flycheck-swift
                                       )
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
@@ -207,7 +211,7 @@ values."
    ;; auto-save the file in-place, `cache' to auto-save the file to another
    ;; file stored in the cache directory and `nil' to disable auto-saving.
    ;; (default 'cache)
-   dotspacemacs-auto-save-file-location 'cache
+   dotspacemacs-auto-save-file-location nil
    ;; Maximum number of rollback slots to keep in the cache. (default 5)
    dotspacemacs-max-rollback-slots 5
    ;; If non nil, `helm' will try to minimize the space it uses. (default nil)
@@ -336,6 +340,9 @@ you should place your code here."
   ;; Replace the selected text when copy & parse
   (delete-selection-mode 1)
 
+  (setq make-backup-files nil) ; stop creating backup~ files
+  (setq auto-save-default nil) ; stop creating #autosave# files
+
   ;; Dired setup
   (setq dired-dwim-target t)                     ;; Enable copyd
   (diredp-toggle-find-file-reuse-dir 1)          ;; Reuse dired buffer
@@ -399,6 +406,7 @@ you should place your code here."
   (push '(other . "Arantir") c-default-style)
   (setq default-tab-width 2) ;; set default tab to 2
   (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode)) ;; load all .h file as c++ header
+  (add-to-list 'auto-mode-alist '("\\.cni\\'" . c++-mode)) ;; load all .h file as c++ header
   (add-to-list 'auto-mode-alist '("\\.mm\\'" . objc-mode)) ;; load all .mm file as objective-c file
 
   (with-eval-after-load ' projectile
@@ -410,6 +418,15 @@ you should place your code here."
 
   ;; swift
   (setq-default swift-mode:basic-offset 2)
+
+  ;; java
+  (add-hook 'java-mode-hook (lambda ()
+                              (setq c-basic-offset 2)))
+  (setq eclim-eclipse-dirs "/Applications/Eclipse.app/Contents/Eclipse"
+        eclim-executable "/Applications/Eclipse.app/Contents/Eclipse/eclim"
+        eclimd-executable "/Applications/Eclipse.app/Contents/Eclipse/eclimd"
+        eclimd-default-workspace "~/Work/projects")
+  ;; (setq eclim-auto-save nil)
 
   ;;=================================================================================
   ;;                       inline-string-rectangle
@@ -503,11 +520,12 @@ you should place your code here."
 
   ;; search in current directories
   (global-set-key (kbd "s-O" ) 'spacemacs/helm-project-smart-do-search)
-
   ;; project setup
-  (global-set-key (kbd "s-o" ) 'helm-projectile-find-file)   ;; find file in project
+  (global-set-key (kbd "s-b" ) 'projectile-switch-to-buffer-other-window)   ;; open buffer in another window
+  (global-set-key (kbd "s-o" ) 'projectile-find-file-other-window)   ;; find file in project
   (global-set-key (kbd "s-`") 'projectile-find-other-file)   ;; jump to header
-  (global-set-key (kbd "<s-return>") 'xref-find-definitions) ;; jump to definitions
+  (global-set-key (kbd "<s-return>") 'spacemacs/jump-to-definition-other-window) ;; jump to definitions
+  ;; (global-set-key (kbd "<s-return>") 'spacemacs/jump-to-definition) ;; jump to definitions
 
   ;; function keys
   (global-set-key '[(f1)] 'engine/search-google)             ;; search text in google
@@ -546,10 +564,19 @@ you should place your code here."
   ;; (require 'flycheck-objc-clang) ; Not necessary if using ELPA package
   ;; (with-eval-after-load 'flycheckeck-objc-clang-setup))
 
+  (eval-after-load 'flycheck '(flycheck-swift-setup))
+  (setq flycheck-swift-sdk-path "/Applications/Xcode-beta.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.0.sdk")
+  ;; Select the appropriate SDK version you use
+  (setq flycheck-swift-target "arm64-apple-ios11")
+
   ;; flycheck setup
   (global-company-mode t)
 
   ;; (setq tab-always-indent 'complete)
+
+  ;; Change the default hippie-expand order and add yasnippet to the front.
+  ;; (setq hippie-expand-try-functions-list
+        ;; '(yas/hippie-try-expand))
 
   ;; function to implement a smarter TAB (EmacsWiki)
   (defun smart-tab ()
@@ -569,7 +596,7 @@ you should place your code here."
           (indent-for-tab-command)))))
   (global-set-key (kbd "TAB") 'smart-tab)
 
-  ;; (global-set-key (kbd "<C-tab>") 'yas-ido-expand)
+  ;; (global-set-key (kbd "M-/") 'yas-hippie-try-expand)
 
   (defun setup-flycheck-clang-project-path ()
     (let ((root (ignore-errors (projectile-project-root))))
@@ -587,15 +614,13 @@ you should place your code here."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
-
  '(font-lock-maximum-decoration (quote ((dired-mode))))
-
  '(org-agenda-files
    (quote
     ("/Users/Arantir/Documents/Notes/org-mode.org" "/Users/Arantir/Documents/Notes/Edge_sdk.org" "/Users/Arantir/Documents/Notes/introduction.org" "/Users/Arantir/Documents/Notes/notes.org")))
  '(package-selected-packages
    (quote
-    (helm-gtags ggtags web-completion-data dash-functional swift-mode pdf-tools tablist engine-mode helm-dash dash-at-point flycheck-objc-clang winum unfill fuzzy rtags cmake-ide levenshtein org-projectile org-present org-pomodoro alert log4e gntp org-download htmlize gnuplot xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help cpputils-cmake dired+ yapfify yaml-mode ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tagedit spacemacs-theme spaceline smeargle slim-mode scss-mode sass-mode restart-emacs rainbow-delimiters quelpa pyvenv pytest pyenv-mode py-isort pug-mode popwin pip-requirements persp-mode pcre2el paradox orgit org-plus-contrib org-bullets open-junk-file neotree mwim move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode live-py-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc info+ indent-guide ido-vertical-mode hy-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md flycheck-pos-tip flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu emmet-mode elisp-slime-nav dumb-jump disaster define-word cython-mode company-web company-tern company-statistics company-emacs-eclim company-c-headers company-anaconda column-enforce-mode coffee-mode cmake-mode clean-aindent-mode clang-format auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell))))
+    (flycheck-swift helm-gtags ggtags web-completion-data dash-functional swift-mode pdf-tools tablist engine-mode helm-dash dash-at-point flycheck-objc-clang winum unfill fuzzy rtags cmake-ide levenshtein org-projectile org-present org-pomodoro alert log4e gntp org-download htmlize gnuplot xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help cpputils-cmake dired+ yapfify yaml-mode ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tagedit spacemacs-theme spaceline smeargle slim-mode scss-mode sass-mode restart-emacs rainbow-delimiters quelpa pyvenv pytest pyenv-mode py-isort pug-mode popwin pip-requirements persp-mode pcre2el paradox orgit org-plus-contrib org-bullets open-junk-file neotree mwim move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode live-py-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc info+ indent-guide ido-vertical-mode hy-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md flycheck-pos-tip flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu emmet-mode elisp-slime-nav dumb-jump disaster define-word cython-mode company-web company-tern company-statistics company-emacs-eclim company-c-headers company-anaconda column-enforce-mode coffee-mode cmake-mode clean-aindent-mode clang-format auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
