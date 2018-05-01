@@ -65,9 +65,8 @@ values."
      git
      org
      (shell :variables
-            shell-default-shell 'shell
+            shell-default-shell 'ansi-term
             shell-default-height 30
-            shell-default-full-span nil
             shell-default-position 'bottom
             )
      ;; spell-checking
