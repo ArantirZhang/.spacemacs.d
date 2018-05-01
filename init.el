@@ -31,6 +31,17 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
+     ;; ----------------------------------------------------------------
+     ;; Example of useful layers you may want to use right away.
+     ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
+     ;; <M-m f e R> (Emacs style) to install them.
+     ;; ----------------------------------------------------------------
+     helm ;; the main completion
+
+     ;; ------------------------- languages ----------------------------
+     (c-c++ :variables
+            c-c++-default-mode-for-headers 'c++-mode
+            c-c++-enable-clang-support t)
      octave
      swift
      python
@@ -38,27 +49,21 @@ values."
      javascript
      java
      html
+     emacs-lisp
+     markdown
+     elixir
+
+     ;; -------------------------- coding -------------------------------
+     auto-completion
+     syntax-checking
+     better-defaults
+     gtags
+
+     ;; --------------------------- tools -------------------------------
      dash
      search-engine
-     ;; ----------------------------------------------------------------
-     ;; Example of useful layers you may want to use right away.
-     ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
-     ;; <M-m f e R> (Emacs style) to install them.
-     ;; ----------------------------------------------------------------
-     helm
-     gtags
-     (c-c++ :variables
-            c-c++-default-mode-for-headers 'c++-mode
-            c-c++-enable-clang-support t)
-     ;; (auto-completion :variables
-                      ;; auto-completion-enable-snippets-in-popup t)
-     auto-completion
-     better-defaults
-     emacs-lisp
      git
-     markdown
      org
-     pdf-tools
      (shell :variables
             shell-default-shell 'shell
             shell-default-height 30
@@ -66,8 +71,6 @@ values."
             shell-default-position 'bottom
             )
      ;; spell-checking
-     ;; (syntax-checking :variables syntax-checking-enable-by-default t)
-     syntax-checking
      ;; version-control
      )
    ;; List of additional packages that will be installed without being
@@ -75,7 +78,6 @@ values."
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '(
-                                      dired+
                                       flycheck-objc-clang
                                       flycheck-swift
                                       )
@@ -270,10 +272,20 @@ values."
    ;; scrolling overrides the default behavior of Emacs which recenters point
    ;; when it reaches the top or bottom of the screen. (default t)
    dotspacemacs-smooth-scrolling nil
-   ;; If non nil line numbers are turned on in all `prog-mode' and `text-mode'
-   ;; derivatives. If set to `relative', also turns on relative line numbers.
+   ;; Control line numbers activation.
+   ;; If set to `t' or `relative' line numbers are turned on in all `prog-mode' and
+   ;; `text-mode' derivatives. If set to `relative', line numbers are relative.
+   ;; This variable can also be set to a property list for finer control:
+   ;; '(:relative nil
+   ;;   :disabled-for-modes dired-mode
+   ;;                       doc-view-mode
+   ;;                       markdown-mode
+   ;;                       org-mode
+   ;;                       pdf-view-mode
+   ;;                       text-mode
+   ;;   :size-limit-kb 1000)
    ;; (default nil)
-   dotspacemacs-line-numbers 'nil
+   dotspacemacs-line-numbers nil
    ;; Code folding method. Possible values are `evil' and `origami'.
    ;; (default 'evil)
    dotspacemacs-folding-method 'evil
@@ -318,7 +330,6 @@ before packages are loaded. If you are unsure, you should try in setting them in
   ;; Set default environment path here
   (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
   (setq exec-path (append exec-path '("/usr/local/bin")))
-
   )
 
 (defun dotspacemacs/user-config ()
@@ -329,11 +340,6 @@ This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
 
-  ;; The fullscreen setup in the dotspacemacs configuration is always using the
-  ;; native fullscreen after macOS Sierra, so we disabled the origin setup and
-  ;; do it by ourself
-  ;; (toggle-frame-fullscreen)
-
   ;; Keep only one instance of emacs running
   (setq-default ns-pop-up-frames nil)
 
@@ -343,11 +349,15 @@ you should place your code here."
   (setq make-backup-files nil) ; stop creating backup~ files
   (setq auto-save-default nil) ; stop creating #autosave# files
 
+  ;; this fixed the issue that the helm will always keep only windows in spacemacs.
+  (setq helm-always-two-windows nil)
+
   ;; Dired setup
+  (require 'dired)
   (setq dired-dwim-target t)                     ;; Enable copyd
-  (diredp-toggle-find-file-reuse-dir 1)          ;; Reuse dired buffer
-  (define-key dired-mode-map (kbd "<left>") 'diredp-up-directory-reuse-dir-buffer)
-  (define-key dired-mode-map (kbd "<right>") 'dired-view-file)
+  (define-key dired-mode-map (kbd "<right>") 'dired-find-alternate-file) ;; dired-view-file
+  (define-key dired-mode-map (kbd "<left>")
+    (lambda () (interactive) (find-alternate-file "..")))  ;; dired-up-directory
 
   ;; Android
   ;; Well, actually the emacs 25.1 already have the tramp for android, so we just
@@ -357,7 +367,7 @@ you should place your code here."
   ;;                       better code indent
   ;;=================================================================================
 
-  ;; Change c++ enum class indent
+    ;; Change c++ enum class indent
   (defun inside-class-enum-p (pos)
     "Checks if POS is within the braces of a C++ \"enum class\"."
     (ignore-errors
@@ -428,6 +438,7 @@ you should place your code here."
         eclimd-default-workspace "~/Work/projects")
   ;; (setq eclim-auto-save nil)
 
+
   ;;=================================================================================
   ;;                       inline-string-rectangle
   ;;=================================================================================
@@ -491,7 +502,7 @@ you should place your code here."
   (define-key global-map [(shift up)] 'agl-uncomment-and-go-up)
 
 
-  ;; search functions
+    ;; search functions
   (defun agl-search-word-backward ()
     "Find the previous occurrence of the current word."
     (interactive)
@@ -532,8 +543,7 @@ you should place your code here."
   (global-set-key '[(f5)] 'projectile-compile-project)       ;; compile project
 
   ;; templates
-  ;; (add-to-list 'load-path (concat (getenv "HOME") "/sources/emacs/site/solarized"))
-  (load "/Users/Arantir/.emacs.d/private/local/template.el")
+  (load "~/.spacemacs.d/local/template.el")
   (require 'ni-templates)
 
   ;; org mode setup
@@ -573,7 +583,6 @@ you should place your code here."
   (global-company-mode t)
 
   ;; (setq tab-always-indent 'complete)
-
   ;; Change the default hippie-expand order and add yasnippet to the front.
   ;; (setq hippie-expand-try-functions-list
         ;; '(yas/hippie-try-expand))
@@ -607,6 +616,7 @@ you should place your code here."
   (add-hook 'c++-mode-hook 'setup-flycheck-clang-project-path)
 
   )
+
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
 (custom-set-variables
@@ -614,13 +624,9 @@ you should place your code here."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(font-lock-maximum-decoration (quote ((dired-mode))))
- '(org-agenda-files
-   (quote
-    ("/Users/Arantir/Documents/Notes/org-mode.org" "/Users/Arantir/Documents/Notes/Edge_sdk.org" "/Users/Arantir/Documents/Notes/introduction.org" "/Users/Arantir/Documents/Notes/notes.org")))
  '(package-selected-packages
    (quote
-    (flycheck-swift helm-gtags ggtags web-completion-data dash-functional swift-mode pdf-tools tablist engine-mode helm-dash dash-at-point flycheck-objc-clang winum unfill fuzzy rtags cmake-ide levenshtein org-projectile org-present org-pomodoro alert log4e gntp org-download htmlize gnuplot xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help cpputils-cmake dired+ yapfify yaml-mode ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tagedit spacemacs-theme spaceline smeargle slim-mode scss-mode sass-mode restart-emacs rainbow-delimiters quelpa pyvenv pytest pyenv-mode py-isort pug-mode popwin pip-requirements persp-mode pcre2el paradox orgit org-plus-contrib org-bullets open-junk-file neotree mwim move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode live-py-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc info+ indent-guide ido-vertical-mode hy-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md flycheck-pos-tip flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu emmet-mode elisp-slime-nav dumb-jump disaster define-word cython-mode company-web company-tern company-statistics company-emacs-eclim company-c-headers company-anaconda column-enforce-mode coffee-mode cmake-mode clean-aindent-mode clang-format auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell))))
+    (xterm-color unfill smeargle shell-pop orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download ob-elixir mwim multi-term mmm-mode markdown-toc markdown-mode magit-gitflow htmlize helm-gtags helm-gitignore gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md ggtags flycheck-swift flycheck-objc-clang flycheck-mix flycheck-credo evil-magit magit magit-popup git-commit ghub with-editor eshell-z eshell-prompt-extras esh-help disaster company-c-headers cmake-mode clang-format alchemist elixir-mode yapfify yaml-mode web-mode web-beautify tagedit swift-mode slim-mode scss-mode sass-mode pyvenv pytest pyenv-mode py-isort pug-mode pip-requirements livid-mode skewer-mode simple-httpd live-py-mode less-css-mode json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc hy-mode helm-pydoc helm-dash helm-css-scss helm-company helm-c-yasnippet haml-mode fuzzy flycheck-pos-tip pos-tip flycheck engine-mode emmet-mode dash-at-point cython-mode company-web web-completion-data company-tern dash-functional tern company-statistics company-emacs-eclim eclim company-anaconda company coffee-mode auto-yasnippet yasnippet anaconda-mode pythonic ac-ispell auto-complete ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
