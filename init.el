@@ -61,7 +61,6 @@ values."
 
      ;; --------------------------- tools -------------------------------
      dash
-     search-engine
      git
      org
      (shell :variables
@@ -358,6 +357,17 @@ you should place your code here."
   (define-key dired-mode-map (kbd "<left>")
     (lambda () (interactive) (find-alternate-file "..")))  ;; dired-up-directory
 
+  ;; Elixir alchemist setup
+  (require 'alchemist)
+  (define-key elixir-mode-map (kbd "s-r") 'alchemist-iex-compile-this-buffer-and-go)
+
+  (require 'flycheck-mix)
+  (flycheck-mix-setup)
+  (flycheck-add-next-checker 'elixir-mix '(t . elixir-credo) 'append) ;; setup the credo as the next syntax checker
+
+  ;; (setq flycheck-elixir-credo-strict t)
+  ;; (require 'flycheck-mix)
+
   ;; Android
   ;; Well, actually the emacs 25.1 already have the tramp for android, so we just
   ;; need to call ESC-f-f and type //adb:: to connect;
@@ -482,6 +492,9 @@ you should place your code here."
   (global-set-key (kbd "s-<up>"    ) 'windmove-up)
   (global-set-key (kbd "s-<down>"  ) 'windmove-down)
 
+  ;; default shell pop
+  (global-set-key (kbd "s-1") 'spacemacs/default-pop-shell)
+
   ;; comment functions
   (defun agl-comment-and-go-down ()
     "Comments the current line and goes to the next one" (interactive)
@@ -531,14 +544,13 @@ you should place your code here."
   ;; search in current directories
   (global-set-key (kbd "s-O" ) 'spacemacs/helm-project-smart-do-search)
   ;; project setup
-  (global-set-key (kbd "s-b" ) 'projectile-switch-to-buffer-other-window)   ;; open buffer in another window
-  (global-set-key (kbd "s-o" ) 'projectile-find-file-other-window)   ;; find file in project
+  (global-set-key (kbd "s-b" ) 'projectile-switch-to-buffer)   ;; open buffer in another window
+  (global-set-key (kbd "s-o" ) 'projectile-find-file)   ;; find file in project
   (global-set-key (kbd "s-`") 'projectile-find-other-file)   ;; jump to header
-  (global-set-key (kbd "<s-return>") 'spacemacs/jump-to-definition-other-window) ;; jump to definitions
-  ;; (global-set-key (kbd "<s-return>") 'spacemacs/jump-to-definition) ;; jump to definitions
+  (global-set-key (kbd "<s-return>") 'spacemacs/jump-to-definition) ;; jump to definitions
 
   ;; function keys
-  (global-set-key '[(f1)] 'engine/search-google)             ;; search text in google
+  ;; (global-set-key '[(f1)] 'engine/search-google)             ;; search text in google
   (global-set-key '[(f5)] 'projectile-compile-project)       ;; compile project
 
   ;; templates
