@@ -1,6 +1,9 @@
 ;; Keep only one instance of emacs running
 (setq-default ns-pop-up-frames nil)
 
+;; ignore warning "recentf mode: Non-character input-event"
+(setq create-lockfiles nil)
+
 ;; Replace the selected text when copy & parse
 (delete-selection-mode 1)
 
@@ -22,11 +25,16 @@
 (define-key elixir-mode-map (kbd "s-r") 'alchemist-iex-compile-this-buffer-and-go)
 (define-key alchemist-iex-mode-map (kbd "s-;") 'alchemist-iex-clear-buffer)
 
+(eval-after-load 'flycheck
+  '(flycheck-credo-setup))
+(add-hook 'elixir-mode-hook 'flycheck-mode)
+(setq flycheck-elixir-credo-strict t)
+
 (require 'flycheck-mix)
 (flycheck-mix-setup)
-(flycheck-add-next-checker 'elixir-mix '(t . elixir-credo) 'append) ;; setup the credo as the next syntax checker
+;;(flycheck-add-next-checker 'elixir-mix '(t . elixir-credo) 'append) ;; setup the credo as the next syntax checker
 
-;; (setq flycheck-elixir-credo-strict t)
+
 ;; (require 'flycheck-mix)
 
 ;; Android
@@ -86,8 +94,9 @@
 (push '(other . "Arantir") c-default-style)
 (setq default-tab-width 2) ;; set default tab to 2
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode)) ;; load all .h file as c++ header
-(add-to-list 'auto-mode-alist '("\\.cni\\'" . c++-mode)) ;; load all .h file as c++ header
+(add-to-list 'auto-mode-alist '("\\.cni\\'" . c++-mode)) ;; load all .chi file as c++
 (add-to-list 'auto-mode-alist '("\\.mm\\'" . objc-mode)) ;; load all .mm file as objective-c file
+(add-to-list 'auto-mode-alist '("\\.ham\\'" . sh-mode)) ;; load all .ham file as shell script
 
 (with-eval-after-load ' projectile
   (push '("C" "h") projectile-other-file-alist))
@@ -106,14 +115,21 @@
 ;; (setq-default company-sourcekit-verbose 1)
 
 ;; java
-(add-hook 'java-mode-hook (lambda ()
-                            (setq c-basic-offset 2)))
+(add-hook 'java-mode-hook (lambda () (setq c-basic-offset 2)))
 ;; (setq eclim-eclipse-dirs "/Applications/Eclipse.app/Contents/Eclipse"
 ;; eclim-executable "/Applications/Eclipse.app/Contents/Eclipse/eclim"
 ;; eclimd-executable "/Applications/Eclipse.app/Contents/Eclipse/eclimd"
 ;; eclimd-default-workspace "~/Work/projects")
 ;; (setq eclim-auto-save nil)
 
+;; niscript
+(load "~/.spacemacs.d/local/niscript.el")
+(add-to-list 'auto-mode-alist '("\\.ni\\'" . niscript-mode))
+(add-to-list 'auto-mode-alist '("\\.nip\\'" . niscript-mode))
+(add-to-list 'auto-mode-alist '("\\.niw\\'" . niscript-mode))
+(add-to-list 'auto-mode-alist '("\\.nil\\'" . niscript-mode))
+(add-to-list 'auto-mode-alist '("\\.nit\\'" . niscript-mode))
+(autoload 'niscript-mode "niScript" nil t)
 
 ;;=================================================================================
 ;;                       inline-string-rectangle
@@ -225,26 +241,41 @@
 (require 'ni-templates)
 
 ;; org mode setup
-;; (setq org-agenda-files '("~/Documents/Notes"))
-;; (setq org-default-notes-file "~/Documents/Notes/notes.org")
-;; (setq org-capture-templates
-;; (quote (
-;; ("t" "Todo" entry (file "~/Documents/Notes/tasks.org")
-;; "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
-;; ("r" "Respond" entry (file "~/Documents/Notes/notes.org")
-;; "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
-;; ("n" "Note" entry (file "~/Documents/Notes/notes.org" "Notes")
-;; "* %? :NOTE:\n%T\n%a\n" :jump-to-captured)
-;; ("j" "Journal" entry (file+datetree "~/git/org/diary.org")
-;; "* %?\n%U\n" :clock-in t :clock-resume t)
-;; ("w" "org-protocol" entry (file "~/Documents/Notes/notes.org")
-;; "* TODO Review %c\n%U\n" :immediate-finish t)
-;; ("m" "Meeting" entry (file "~/Documents/Notes/notes.org")
-;; "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
-;; ("p" "Phone call" entry (file "~/Documents/Notes/notes.org")
-;; "* PHONE %? :PHONE:\n%U" :clock-in t :clock-resume t)
-;; ("h" "Habit" entry (file "~/Documents/Notes/notes.org")
-;; "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n"))))
+(setq org-agenda-files '("~/Documents/Notes"))
+(setq org-default-notes-file "~/Documents/Notes/notes.org")
+(setq org-capture-templates
+      (quote (
+              ("t" "Todo" entry (file "~/Documents/Notes/tasks.org")
+               "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
+              ("r" "Respond" entry (file "~/Documents/Notes/notes.org")
+               "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
+              ("n" "Note" entry (file "~/Documents/Notes/notes.org" "Notes")
+               "* %? :NOTE:\n%T\n%a\n" :jump-to-captured)
+              ("w" "org-protocol" entry (file "~/Documents/Notes/notes.org")
+               "* TODO Review %c\n%U\n" :immediate-finish t)
+              ("m" "Meeting" entry (file "~/Documents/Notes/notes.org")
+               "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
+              ("h" "Habit" entry (file "~/Documents/Notes/notes.org")
+               "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n")
+              )))
+
+(require 'org-projectile)
+(push (org-projectile-project-todo-entry) org-capture-templates)
+;; (setq org-agenda-files (append org-agenda-files (org-projectile-todo-files)))
+(setq org-projectile-capture-template "*** TODO %?\n %i\n %a")
+(add-to-list 'org-capture-templates
+             (org-projectile-project-todo-entry
+              :capture-character "l"
+              :capture-heading "Linked Project TODO"))
+
+;; If you would like a TODO entry to automatically change to DONE when all children are done, you can use the following setup:
+(defun org-summary-todo (n-done n-not-done)
+  "Switch entry to DONE when all subentries are done, to TODO otherwise."
+  (let (org-log-done org-log-states)   ; turn off logging
+    (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+
+(add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
+
 
 ;; (setenv "PATH" (concat (getenv "PATH") ":/home/zhangxun.zx/bin/"))
 ;; (add-to-list 'tramp-remote-path "/bin:/usr/bin:/opt/repo-alibaba/bin/:~/bin"):
