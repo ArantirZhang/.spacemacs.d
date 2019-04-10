@@ -33,7 +33,9 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(
+   '(windows-scripts
+     php
+     nginx
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press `SPC f e R' (Vim style) or
@@ -42,15 +44,21 @@ This function should only modify configuration layer settings."
      helm ;; the main completion
 
      ;; ------------------------- languages ----------------------------
-     (c-c++ :variables
-            c-c++-default-mode-for-headers 'c++-mode
-            c-c++-enable-clang-support t)
+     lsp  ;; Language Server Protocol
+     dap
+     ;; (c-c++ :variables
+            ;; c-c++-default-mode-for-headers 'c++-mode
+            ;; c-c++-enable-clang-support t)
+     (c-c++ :variables c-c++-backend 'lsp-ccls)
      octave
      swift
      python
+     ;; (python :variables python-backend 'lsp)
      yaml
      javascript
-     java
+
+     ;; java
+     (java :variables java-backend 'lsp)
      html
      emacs-lisp
      markdown
@@ -60,10 +68,10 @@ This function should only modify configuration layer settings."
      auto-completion
      syntax-checking
      better-defaults
-     gtags
+     ;; gtags
 
      ;; --------------------------- tools -------------------------------
-     ;; dash
+     dash
      git
      ;; (org :variables org-projectile-file "TODO.org")
      org
@@ -80,9 +88,8 @@ This function should only modify configuration layer settings."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '(
-                                      company-sourcekit
-                                      )
+   dotspacemacs-additional-packages '(company-sourcekit)
+
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
 
@@ -156,7 +163,8 @@ It should only modify the values of Spacemacs settings."
    ;; when the current branch is not `develop'. Note that checking for
    ;; new versions works via git commands, thus it calls GitHub services
    ;; whenever you start Emacs. (default nil)
-   dotspacemacs-check-for-update 1
+   dotspacemacs-check-for-update nil
+
    ;; If non-nil, a form that evaluates to a package directory. For example, to
    ;; use different package directories for different Emacs versions, set this
    ;; to `emacs-version'. (default 'emacs-version)
