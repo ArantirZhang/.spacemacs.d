@@ -3,7 +3,7 @@
 ;;;======================================================================
 ;;; Template
 ;;;======================================================================
-(setenv "HAM_HOME" "/Users/Arantir/Work/ham/")
+;; (setenv "HAM_HOME" "/Users/Arantir/Work/ham/")
 ;; (add-to-list 'load-path (concat (getenv "HAM_HOME") "/sources/emacs"))
 
 (defun agl-bash-cmd-to-string (aCmd)
