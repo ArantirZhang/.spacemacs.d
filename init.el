@@ -33,7 +33,8 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(windows-scripts
+   '(lua
+     windows-scripts
      php
      nginx
      ;; ----------------------------------------------------------------
@@ -46,11 +47,13 @@ This function should only modify configuration layer settings."
      ;; ------------------------- languages ----------------------------
      lsp  ;; Language Server Protocol
      dap
+     cmake
      ;; (c-c++ :variables
             ;; c-c++-default-mode-for-headers 'c++-mode
             ;; c-c++-enable-clang-support t)
      (c-c++ :variables c-c++-backend 'lsp-ccls)
-     octave
+     ;; (cmake :variables cmake-enable-cmake-ide-support t)
+     ;; octave
      swift
      python
      ;; (python :variables python-backend 'lsp)
@@ -68,18 +71,18 @@ This function should only modify configuration layer settings."
      auto-completion
      syntax-checking
      better-defaults
-     ;; gtags
+     gtags
 
      ;; --------------------------- tools -------------------------------
      dash
      git
      ;; (org :variables org-projectile-file "TODO.org")
-     org
-     (shell :variables
-            shell-default-shell 'ansi-term
-            shell-default-height 30
-            shell-default-position 'bottom
-            )
+     ;; org
+     ;; (shell :variables
+            ;; shell-default-shell 'ansi-term
+            ;; shell-default-height 30
+            ;; shell-default-position 'bottom
+            ;; )
      ;; spell-checking
      ;; version-control
      )
@@ -94,7 +97,7 @@ This function should only modify configuration layer settings."
    dotspacemacs-frozen-packages '()
 
    ;; A list of packages that will not be installed and loaded.
-   dotspacemacs-excluded-packages '()
+   dotspacemacs-excluded-packages '(smartparens)
 
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
@@ -388,7 +391,7 @@ It should only modify the values of Spacemacs settings."
 
    ;; If non-nil, start an Emacs server if one is not already running.
    ;; (default nil)
-   dotspacemacs-enable-server nil
+   dotspacemacs-enable-server t
 
    ;; Set the emacs server socket location.
    ;; If nil, uses whatever the Emacs default is, otherwise a directory path
@@ -434,7 +437,7 @@ It should only modify the values of Spacemacs settings."
    ;; `trailing' to delete only the whitespace at end of lines, `changed' to
    ;; delete only whitespace for changed lines or `nil' to disable cleanup.
    ;; (default nil)
-   dotspacemacs-whitespace-cleanup 'all
+   dotspacemacs-whitespace-cleanup 'nil
 
    ;; Either nil or a number of seconds. If non-nil zone out after the specified
    ;; number of seconds. (default nil)
@@ -473,6 +476,8 @@ Put your configuration code here, except for variables that should be set
 before packages are loaded."
   (load "~/.spacemacs.d/config.el"))
 
+;; Do not write anything past this comment. This is where Emacs will
+;; auto-generate custom variable definitions.
 (defun dotspacemacs/emacs-custom-settings ()
   "Emacs custom settings.
 This is an auto-generated function, do not modify its content directly, use
@@ -483,12 +488,9 @@ This function is called at the very end of Spacemacs initialization."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(org-agenda-files
-   (quote
-    ("~/Work/we3d/TODOs.org" "/Users/Arantir/Documents/Notes/introduction.org" "/Users/Arantir/Documents/Notes/notes.org" "/Users/Arantir/Documents/Notes/tasks.org")))
  '(package-selected-packages
    (quote
-    (yasnippet-snippets yapfify yaml-mode xterm-color ws-butler winum web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen unfill toc-org tagedit symon swift-mode string-inflection spaceline-all-the-icons spaceline powerline smeargle slim-mode shell-pop scss-mode sass-mode restart-emacs rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode prettier-js popwin pippel pipenv pip-requirements persp-mode password-generator paradox spinner overseer orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download org-bullets org-brain open-junk-file ob-elixir neotree nameless mwim mvn multi-term move-text mmm-mode meghanada maven-test-mode markdown-toc markdown-mode magit-svn magit-gitflow macrostep lorem-ipsum livid-mode skewer-mode live-py-mode link-hint json-navigator hierarchy json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc indent-guide importmagic epc ctable concurrent deferred impatient-mode simple-httpd hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-xref helm-themes helm-swoop helm-rtags helm-pydoc helm-purpose window-purpose imenu-list helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-git-grep helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag haml-mode groovy-mode groovy-imports pcache gradle-mode google-translate google-c-style golden-ratio gnuplot gitignore-templates gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md ggtags fuzzy flycheck-rtags flycheck-pos-tip pos-tip flycheck-mix flycheck-credo flycheck flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit magit-popup git-commit ghub with-editor evil-lisp-state evil-lion evil-indent-plus evil-iedit-state iedit evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens smartparens paredit evil-args evil-anzu anzu eval-sexp-fu highlight eshell-z eshell-prompt-extras esh-help ensime sbt-mode scala-mode emmet-mode elisp-slime-nav editorconfig dumb-jump doom-modeline eldoc-eval shrink-path all-the-icons memoize disaster define-word cython-mode counsel-projectile projectile counsel swiper ivy company-web web-completion-data company-tern tern company-statistics company-sourcekit sourcekit request dash-functional company-rtags rtags company-emacs-eclim eclim company-c-headers company-anaconda column-enforce-mode clean-aindent-mode clang-format centered-cursor-mode auto-yasnippet yasnippet auto-highlight-symbol auto-compile packed anaconda-mode pythonic f alchemist s company dash elixir-mode pkg-info epl aggressive-indent ace-window ace-link ace-jump-helm-line helm avy helm-core ac-ispell auto-complete popup which-key use-package pcre2el org-plus-contrib hydra font-lock+ evil goto-chg undo-tree dotenv-mode diminish bind-map bind-key async))))
+    (helm-ctest cmake-mode cmake-ide levenshtein yasnippet-snippets yapfify yaml-mode ws-butler writeroom-mode winum which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package unfill treemacs-projectile toc-org tagedit symon swift-mode string-inflection spaceline-all-the-icons smeargle slim-mode scss-mode sass-mode restart-emacs rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode prettier-js powershell popwin pippel pipenv pip-requirements phpunit phpcbf php-extras php-auto-yasnippets persp-mode pcre2el password-generator paradox overseer org-bullets open-junk-file ob-elixir nginx-mode nameless mwim mvn move-text mmm-mode meghanada maven-test-mode markdown-toc magit-svn magit-gitflow macrostep lsp-ui lsp-java lorem-ipsum livid-mode live-py-mode link-hint json-navigator json-mode js2-refactor js-doc indent-guide importmagic impatient-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-rtags helm-pydoc helm-purpose helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-git-grep helm-flx helm-descbinds helm-dash helm-css-scss helm-company helm-c-yasnippet helm-ag groovy-mode groovy-imports gradle-mode google-translate google-c-style golden-ratio gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md ggtags fuzzy font-lock+ flycheck-rtags flycheck-pos-tip flycheck-mix flycheck-credo flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-numbers evil-nerd-commenter evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu ensime emmet-mode elisp-slime-nav editorconfig dumb-jump drupal-mode dotenv-mode doom-modeline disaster diminish define-word dash-at-point dap-mode cython-mode cquery counsel-projectile counsel-gtags company-web company-tern company-statistics company-sourcekit company-rtags company-php company-lua company-lsp company-emacs-eclim company-c-headers company-anaconda column-enforce-mode clean-aindent-mode clang-format centered-cursor-mode ccls auto-yasnippet auto-highlight-symbol auto-compile alchemist aggressive-indent ace-link ace-jump-helm-line ac-ispell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
