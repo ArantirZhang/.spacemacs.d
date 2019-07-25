@@ -30,12 +30,25 @@
 ;; this fixed the issue that the helm will always keep only windows in spacemacs.
 (setq helm-always-two-windows nil)
 
+(require 'helm-config)
+(helm-mode 1)
+(define-key helm-map (kbd "<right>") 'helm-execute-persistent-action)
+(define-key helm-map (kbd "<left>") 'helm-find-files-up-one-level)
+
+(define-key helm-find-files-map (kbd "s-c") 'helm-ff-run-copy-file)
+(define-key helm-find-files-map (kbd "s-d") 'helm-ff-run-delete-file)
+(define-key helm-find-files-map (kbd "s-r") 'helm-ff-run-rename-file)
+(define-key helm-find-files-map (kbd "s-l") 'helm-ff-run-symlink-file)
+;; (define-key helm-find-files-map (kbd "s-t") 'helm-ff-run-touch-files)
+;; (define-key helm-map (kbd "") 'helm-ff-run-hardlink-file)
+;; (define-key helm-map (kbd "") 'helm-ff-run-kill-buffer-persistent)
+;; (define-key helm-map (kbd "") 'helm-ff-run-load-file)
+
 ;; Dired setup
 (require 'dired)
 (setq dired-dwim-target t)                     ;; Enable copyd
 (define-key dired-mode-map (kbd "<right>") 'dired-find-alternate-file) ;; dired-view-file
-(define-key dired-mode-map (kbd "<left>")
-  (lambda () (interactive) (find-alternate-file "..")))  ;; dired-up-directory
+(define-key dired-mode-map (kbd "<left>") 'dired-up-directory) ;; dired-up-directory
 
 ;; Elixir alchemist setup
 (require 'alchemist)
