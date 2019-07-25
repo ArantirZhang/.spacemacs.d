@@ -11,6 +11,9 @@
      (define-key company-active-map (kbd "<tab>") 'company-complete-selection)))
 ;; company mode ===================================================================================
 
+
+(show-paren-mode nil) ;; disable the paren-mode to get rid of the lag, and is not working well with multi-cursor
+(electric-indent-mode 0) ;; electric-indent-mode disabled, it sometimes break my code
 (ido-mode -1) ;; disable ido mode
 (setq-default ns-pop-up-frames nil) ;; Keep only one instance of emacs running
 
@@ -132,10 +135,14 @@
 
 ;; lsp mode setup, doc frame and sideline is disabled
 (setq-default lsp-ui-doc-enable nil)
-(setq-default lsp-before-save-edits nil)
 (setq-default lsp-ui-sideline-enable nil)
-;; (setq-default lsp-enable-completion-at-point nil)
+(setq-default lsp-before-save-edits nil)
 (setq-default lsp-enable-indentation nil)
+(setq-default lsp-enable-on-type-formatting nil)
+(setq-default lsp-enable-folding nil)
+
+;; (setq-default lsp-enable-completion-at-point nil)
+
 ;; (setq-default lsp-java-save-action-organize-imports nil)
 
 ;; niscript
