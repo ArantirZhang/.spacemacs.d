@@ -1,5 +1,3 @@
-(add-hook 'hack-local-variables-hook (lambda () (setq truncate-lines t))) ;;disable line wrapping
-
 ;; company mode ===================================================================================
 (global-company-mode t)
 (setq company-dabbrev-downcase nil) ;; don't use downcase mode
