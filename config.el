@@ -11,7 +11,7 @@
      (define-key company-active-map (kbd "<tab>") 'company-complete-selection)))
 ;; company mode ===================================================================================
 
-
+(global-set-key [mouse-movement] 'ignore)
 (show-paren-mode nil) ;; disable the paren-mode to get rid of the lag, and is not working well with multi-cursor
 (electric-indent-mode 0) ;; electric-indent-mode disabled, it sometimes break my code
 (ido-mode -1) ;; disable ido mode
@@ -52,9 +52,9 @@
 (define-key dired-mode-map (kbd "<left>") 'dired-up-directory) ;; dired-up-directory
 
 ;; Elixir alchemist setup
-(require 'alchemist)
-(define-key elixir-mode-map (kbd "s-r") 'alchemist-iex-compile-this-buffer-and-go)
-(define-key alchemist-iex-mode-map (kbd "s-;") 'alchemist-iex-clear-buffer)
+;; (require 'alchemist)
+;; (define-key elixir-mode-map (kbd "s-r") 'alchemist-iex-compile-this-buffer-and-go)
+;; (define-key alchemist-iex-mode-map (kbd "s-;") 'alchemist-iex-clear-buffer)
 
 ;; (eval-after-load 'flycheck
   ;; '(flycheck-credo-setup))
@@ -108,6 +108,13 @@
 
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
+;; (setq web-mode-markup-indent-offset 2)
+;; nxml-mode
+(setq
+ web-mode-markup-indent-offset 2
+ web-mode-css-indent-offset 2
+ web-mode-code-indent-offset 2
+ web-mode-attr-indent-offset 2)
 
 (c-add-style "Arantir"
              '("stroustrup"
@@ -137,12 +144,16 @@
 (setq-default lsp-ui-doc-enable nil)
 (setq-default lsp-ui-sideline-enable nil)
 (setq-default lsp-before-save-edits nil)
+(setq-default lsp-highlight-symbol-at-point nil)
+(setq-default lsp-enable-symbol-highlighting nil)
 (setq-default lsp-enable-indentation nil)
 (setq-default lsp-enable-on-type-formatting nil)
 (setq-default lsp-enable-folding nil)
-
+(setq-default lsp-enable-file-watchers nil)
+(setq ccls-sem-highlight-method nil)
+(setq lsp-enable-links nil)
+(setq lsp-enable-semantic-highlighting nil)
 ;; (setq-default lsp-enable-completion-at-point nil)
-
 ;; (setq-default lsp-java-save-action-organize-imports nil)
 
 ;; niscript
@@ -189,17 +200,6 @@
 ;; (setq-default company-sourcekit-use-yasnippet nil)
 ;; (setq-default sourcekit-verbose 1)
 ;; (setq-default company-sourcekit-verbose 1)
-
-;; java
-;; (add-hook 'java-mode-hook (lambda ()
-                            ;; (setq c-basic-offset 2)))
-
-
-;; (setq eclim-eclipse-dirs "/Applications/Eclipse.app/Contents/Eclipse"
-;; eclim-executable "/Applications/Eclipse.app/Contents/Eclipse/eclim"
-;; eclimd-executable "/Applications/Eclipse.app/Contents/Eclipse/eclimd"
-;; eclimd-default-workspace "~/Work/projects")
-;; (setq eclim-auto-save nil)
 
 ;;=================================================================================
 ;;                       inline-string-rectangle
