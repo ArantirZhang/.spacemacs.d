@@ -1,3 +1,75 @@
+(global-so-long-mode 1)
+
+(setq bidi-paragraph-direction 'left-to-right)
+(setq bidi-inhibit-bpa t)
+(setq recenter-redisplay nil) ;; fixed a screen blinking issue on macOS
+(setq no-redraw-on-reenter nil)
+;; (setq global-auto-revert-mode nil)
+;; disable mouse ==================================================================================
+;; (load "~/.spacemacs.d/local/disable-mouse.el")
+;; (require 'disable-mouse)
+;; (global-disable-mouse-mode)
+;; (mapc #'disable-mouse-in-keymap
+      ;; (list evil-motion-state-map
+            ;; evil-normal-state-map
+            ;; evil-visual-state-map
+            ;; evil-insert-state-map))
+;; (setq mouse-avoidance-mode 'banish)
+;; Enabling only some features
+(require 'dap-cpptools)
+;; (require 'dap-lldb)
+(defun duplicate-line (arg)
+  "Duplicate current line, leaving point in lower line."
+  (interactive "*p")
+
+  ;; save the point for undo
+  (setq buffer-undo-list (cons (point) buffer-undo-list))
+
+  ;; local variables for start and end of line
+  (let ((bol (save-excursion (beginning-of-line) (point)))
+        eol)
+    (save-excursion
+
+      ;; don't use forward-line for this, because you would have
+      ;; to check whether you are at the end of the buffer
+      (end-of-line)
+      (setq eol (point))
+
+      ;; store the line and disable the recording of undo information
+      (let ((line (buffer-substring bol eol))
+            (buffer-undo-list t)
+            (count arg))
+        ;; insert the line arg times
+        (while (> count 0)
+          (newline)         ;; because there is no newline in 'line'
+          (insert line)
+          (setq count (1- count)))
+        )
+
+      ;; create the undo information
+      (setq buffer-undo-list (cons (cons eol (point)) buffer-undo-list)))
+    ) ; end-of-let
+
+  ;; put the point in the lowest line and return
+  (next-line arg))
+
+(global-set-key (kbd "s-d") 'duplicate-line)
+(global-set-key (kbd "s-D") 'kill-whole-line)
+
+(defun align-repeat (start end regexp)
+  "Repeat alignment with respect to
+     the given regular expression."
+  (interactive "r\nsAlign regexp: ")
+  (align-regexp start end
+                (concat "\\(\\s-*\\)" regexp) 1 1 t))
+
+(defun align-repeat0 (start end regexp)
+  "Repeat alignment with respect to
+     the given regular expression."
+  (interactive "r\nsAlign regexp: ")
+  (align-regexp start end
+                (concat "\\(\\s-*\\)" regexp) 1 0 t))
+
 ;; company mode ===================================================================================
 (global-company-mode t)
 (setq company-dabbrev-downcase nil) ;; don't use downcase mode
@@ -116,6 +188,8 @@
  web-mode-code-indent-offset 2
  web-mode-attr-indent-offset 2)
 
+(setq sh-indentation 2)
+
 (c-add-style "Arantir"
              '("stroustrup"
                (indent-tabs-mode . nil)
@@ -142,7 +216,7 @@
 
 ;; lsp mode setup, doc frame and sideline is disabled
 (setq-default lsp-ui-doc-enable nil)
-(setq-default lsp-ui-sideline-enable nil)
+(setq-default lsp-ui-sideline-enable t)
 (setq-default lsp-before-save-edits nil)
 (setq-default lsp-highlight-symbol-at-point nil)
 (setq-default lsp-enable-symbol-highlighting nil)
@@ -150,11 +224,28 @@
 (setq-default lsp-enable-on-type-formatting nil)
 (setq-default lsp-enable-folding nil)
 (setq-default lsp-enable-file-watchers nil)
+
+;; (setq-default lsp-clients-clangd-args "-header-insertion=never")
+;; (setq-default lsp-clients-clangd-args "-header-insertion=never")
+
+;; (c++-mode . ((lsp-clients-clangd-args . ("-header-insertion=never"))))
+
 (setq ccls-sem-highlight-method nil)
 (setq lsp-enable-links nil)
 (setq lsp-enable-semantic-highlighting nil)
+(with-eval-after-load 'lsp-mode
+  (define-key lsp-mode-map (kbd "s-r") 'lsp-ui-sideline-apply-code-actions))
+(setq-default lsp-java-import-gradle-enabled t)
+
+
 ;; (setq-default lsp-enable-completion-at-point nil)
 ;; (setq-default lsp-java-save-action-organize-imports nil)
+
+;; hlsl
+(load "~/.spacemacs.d/local/hlsl-model.el")
+(add-to-list 'auto-mode-alist '("\\.cgh\\'" . hlsl-mode))
+(add-to-list 'auto-mode-alist '("\\.cgc\\'" . hlsl-mode))
+(autoload 'hlsl-mode "hlsl" nil t)
 
 ;; niscript
 (load "~/.spacemacs.d/local/niscript.el")
@@ -163,6 +254,7 @@
 (add-to-list 'auto-mode-alist '("\\.niw\\'" . niscript-mode))
 (add-to-list 'auto-mode-alist '("\\.nil\\'" . niscript-mode))
 (add-to-list 'auto-mode-alist '("\\.nit\\'" . niscript-mode))
+(add-to-list 'auto-mode-alist '("\\.niui\\'" . web-mode))
 (autoload 'niscript-mode "niScript" nil t)
 
 (load "~/.spacemacs.d/local/hamfile.el")
@@ -214,6 +306,24 @@
 (global-set-key (kbd "C-*") 'mc/mark-all-like-this)
 (global-set-key (kbd "C-x r t") 'set-rectangular-region-anchor)
 
+(defun mmc/increment-number-at-cursors (number)
+  "Increment numbers for all cursors by NUMBER."
+  (interactive (list (read-number "Input increment number: " 0)))
+  (mc/insert-numbers number)
+  )
+
+(defun mmc/increment-letter-at-cursors (letter)
+  "Insert increasing letters for each cursor, starting at 0 or ARG.
+     Where letter[0]=a letter[2]=c letter[26]=aa"
+  (interactive (list (read-number "Input increment letter where [0]=a [26]=aa : " 0)))
+  (mc/insert-letters letter)
+  )
+
+(with-eval-after-load 'multiple-cursors-core
+  (define-key mc/keymap (kbd "M-s-<up>") 'mmc/increment-number-at-cursors)
+  (define-key mc/keymap (kbd "M-s-<down>") 'mmc/increment-letter-at-cursors)
+  )
+
 ;;=================================================================================
 ;;                       toggle-camelcase-underscores
 ;;=================================================================================
@@ -239,11 +349,29 @@
 ;;                             Key bindings
 ;;=================================================================================
 
+
+(defun align-repeat (start end regexp)
+  "Repeat alignment with respect to
+     the given regular expression."
+  (interactive "r\nsAlign regexp: ")
+  (align-regexp start end
+                (concat "\\(\\s-*\\)" regexp) 1 1 t))
+
+(defun align-repeat0 (start end regexp)
+  "Repeat alignment with respect to
+     the given regular expression."
+  (interactive "r\nsAlign regexp: ")
+  (align-regexp start end
+                (concat "\\(\\s-*\\)" regexp) 1 0 t))
+
+
 ;; Switch frame window;
 (global-set-key (kbd "s-<left>"  ) 'windmove-left)
 (global-set-key (kbd "s-<right>" ) 'windmove-right)
 (global-set-key (kbd "s-<up>"    ) 'windmove-up)
 (global-set-key (kbd "s-<down>"  ) 'windmove-down)
+(global-set-key (kbd "s-e") 'align-repeat0)
+(global-set-key (kbd "s-E") 'align-repeat)
 
 ;; default shell pop
 (global-set-key (kbd "s-1") 'spacemacs/default-pop-shell)
