@@ -1,5 +1,7 @@
 (global-so-long-mode 1)
-
+(mouse-wheel-mode -1)
+;; (beacon-mode 1)
+(toggle-scroll-bar -1)
 (setq bidi-paragraph-direction 'left-to-right)
 (setq bidi-inhibit-bpa t)
 (setq recenter-redisplay nil) ;; fixed a screen blinking issue on macOS
@@ -87,12 +89,13 @@
 (show-paren-mode nil) ;; disable the paren-mode to get rid of the lag, and is not working well with multi-cursor
 (electric-indent-mode 0) ;; electric-indent-mode disabled, it sometimes break my code
 (ido-mode -1) ;; disable ido mode
+(setq-default spacemacs-yank-indent-threshold 0) ;; disable intent
 (setq-default ns-pop-up-frames nil) ;; Keep only one instance of emacs running
 
 ;; Keep the Chinese character the same size as English character
-(dolist (charset '(kana han cjk-misc bopomofo))
-  (set-fontset-font (frame-parameter nil 'font) charset
-                    (font-spec :family "SimHei" :size 12)))
+;; (dolist (charset '(kana han cjk-misc bopomofo))
+  ;; (set-fontset-font (frame-parameter nil 'font) charset
+                    ;; (font-spec :family "SimHei" :size 10)))
 
 
 (setq create-lockfiles nil) ;; ignore warning "recentf mode: Non-character input-event"
@@ -120,8 +123,12 @@
 ;; Dired setup
 (require 'dired)
 (setq dired-dwim-target t)                     ;; Enable copyd
+(add-hook 'dired-mode-hook
+          (lambda ()
+            (define-key dired-mode-map (kbd "<left>")
+              (lambda () (interactive) (find-alternate-file "..")))))
 (define-key dired-mode-map (kbd "<right>") 'dired-find-alternate-file) ;; dired-view-file
-(define-key dired-mode-map (kbd "<left>") 'dired-up-directory) ;; dired-up-directory
+;; (define-key dired-mode-map (kbd "<left>") 'dired-up-directory) ;; dired-up-directory
 
 ;; Elixir alchemist setup
 ;; (require 'alchemist)
@@ -188,6 +195,8 @@
  web-mode-code-indent-offset 2
  web-mode-attr-indent-offset 2)
 
+(setq nxml-child-indent 2 nxml-attribute-indent 2)
+
 (setq sh-indentation 2)
 
 (c-add-style "Arantir"
@@ -215,8 +224,11 @@
         (other . "Arantir")))
 
 ;; lsp mode setup, doc frame and sideline is disabled
-(setq-default lsp-ui-doc-enable nil)
+
+(setq-default lsp-ui-doc-enable t)
+(setq-default lsp-headerline-breadcrumb-enable nil)
 (setq-default lsp-ui-sideline-enable t)
+(setq-default lsp-ui-sideline-show-code-actions t)
 (setq-default lsp-before-save-edits nil)
 (setq-default lsp-highlight-symbol-at-point nil)
 (setq-default lsp-enable-symbol-highlighting nil)
@@ -224,19 +236,11 @@
 (setq-default lsp-enable-on-type-formatting nil)
 (setq-default lsp-enable-folding nil)
 (setq-default lsp-enable-file-watchers nil)
+(setq-default lsp-enable-links nil)
 
-;; (setq-default lsp-clients-clangd-args "-header-insertion=never")
-;; (setq-default lsp-clients-clangd-args "-header-insertion=never")
-
-;; (c++-mode . ((lsp-clients-clangd-args . ("-header-insertion=never"))))
-
-(setq ccls-sem-highlight-method nil)
-(setq lsp-enable-links nil)
-(setq lsp-enable-semantic-highlighting nil)
 (with-eval-after-load 'lsp-mode
   (define-key lsp-mode-map (kbd "s-r") 'lsp-ui-sideline-apply-code-actions))
 (setq-default lsp-java-import-gradle-enabled t)
-
 
 ;; (setq-default lsp-enable-completion-at-point nil)
 ;; (setq-default lsp-java-save-action-organize-imports nil)
@@ -273,6 +277,9 @@
 (add-to-list 'auto-mode-alist '("\\.cni\\'" . c++-mode)) ;; load all .cni file as c++
 (add-to-list 'auto-mode-alist '("\\.inl\\'" . c++-mode)) ;; load all .inl file as c++
 (add-to-list 'auto-mode-alist '("\\.mm\\'" . c++-mode)) ;; load all .mm file as objective-c file
+
+(add-to-list 'auto-mode-alist '("\\.xml\\'" . xml-mode)) 
+(add-to-list 'auto-mode-alist '("\\.XML\\'" . xml-mode)) 
 
 (with-eval-after-load ' projectile
   (push '("C" "h") projectile-other-file-alist))
@@ -320,8 +327,8 @@
   )
 
 (with-eval-after-load 'multiple-cursors-core
-  (define-key mc/keymap (kbd "M-s-<up>") 'mmc/increment-number-at-cursors)
-  (define-key mc/keymap (kbd "M-s-<down>") 'mmc/increment-letter-at-cursors)
+  (define-key mc/keymap (kbd "M-s-<down>") 'mmc/increment-number-at-cursors)
+  (define-key mc/keymap (kbd "M-s-<up>") 'mmc/increment-letter-at-cursors)
   )
 
 ;;=================================================================================
@@ -423,6 +430,8 @@
 
 ;; search in current directories
 (global-set-key (kbd "s-O" ) 'spacemacs/helm-project-smart-do-search)
+(global-set-key (kbd "s-i" ) 'spacemacs/helm-dir-do-ag)
+(global-set-key (kbd "s-I" ) 'spacemacs/helm-do-ag)
 ;; project setup
 (global-set-key (kbd "s-b" ) 'projectile-switch-to-buffer)   ;; open buffer in another window
 (global-set-key (kbd "s-o" ) 'projectile-find-file)   ;; find file in project
@@ -436,6 +445,11 @@
 ;; templates
 (load "~/.spacemacs.d/local/template.el")
 (require 'ni-templates)
+
+(load "~/.spacemacs.d/local/fan-mode_bak.el")
+(require 'fan-mode)
+(add-to-list 'auto-mode-alist '("\\.fan\\'" . fan-mode))
+
 
 ;; ;; ;; ;; org mode setup
 
