@@ -1,5 +1,4 @@
 (setq explicit-shell-file-name "/bin/bash") ;; setup default shell
-(global-undo-tree-mode -1)
 (setq evil-undo-system 'undo-redo)
 (evil-set-undo-system 'undo-redo)
 
