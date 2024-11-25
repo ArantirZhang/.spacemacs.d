@@ -1,3 +1,8 @@
+(setq explicit-shell-file-name "/bin/bash") ;; setup default shell
+(global-undo-tree-mode -1)
+(setq evil-undo-system 'undo-redo)
+(evil-set-undo-system 'undo-redo)
+
 (global-so-long-mode 1)
 (mouse-wheel-mode -1)
 ;; (beacon-mode 1)
@@ -55,8 +60,8 @@
   ;; put the point in the lowest line and return
   (next-line arg))
 
-(global-set-key (kbd "s-d") 'duplicate-line)
 (global-set-key (kbd "s-D") 'kill-whole-line)
+(global-set-key (kbd "s-d") 'duplicate-line)
 
 (defun align-repeat (start end regexp)
   "Repeat alignment with respect to
@@ -87,6 +92,7 @@
 
 (global-set-key [mouse-movement] 'ignore)
 (show-paren-mode nil) ;; disable the paren-mode to get rid of the lag, and is not working well with multi-cursor
+(show-smartparens-global-mode -1) ;; prevents show-smartparens-mode from "infiltrating" major modes which didn't ask for it
 (electric-indent-mode 0) ;; electric-indent-mode disabled, it sometimes break my code
 (ido-mode -1) ;; disable ido mode
 (setq-default spacemacs-yank-indent-threshold 0) ;; disable intent
@@ -106,7 +112,8 @@
 ;; this fixed the issue that the helm will always keep only windows in spacemacs.
 (setq helm-always-two-windows nil)
 
-(require 'helm-config)
+;;(require 'helm-config)
+;;(require 'helm-autoloads)
 (helm-mode 1)
 (define-key helm-map (kbd "<right>") 'helm-execute-persistent-action)
 (define-key helm-map (kbd "<left>") 'helm-find-files-up-one-level)
@@ -226,7 +233,7 @@
 ;; lsp mode setup, doc frame and sideline is disabled
 
 (setq-default lsp-ui-doc-enable t)
-(setq-default lsp-headerline-breadcrumb-enable nil)
+;; (setq-default lsp-headerline-breadcrumb-enable nil)
 (setq-default lsp-ui-sideline-enable t)
 (setq-default lsp-ui-sideline-show-code-actions t)
 (setq-default lsp-before-save-edits nil)
@@ -381,7 +388,7 @@
 (global-set-key (kbd "s-E") 'align-repeat)
 
 ;; default shell pop
-(global-set-key (kbd "s-1") 'spacemacs/default-pop-shell)
+;; (global-set-key (kbd "s-1") 'spacemacs/default-pop-shell)
 
 ;; comment functions
 (defun agl-comment-and-go-down ()
@@ -446,12 +453,30 @@
 (load "~/.spacemacs.d/local/template.el")
 (require 'ni-templates)
 
-(load "~/.spacemacs.d/local/fan-mode_bak.el")
-(require 'fan-mode)
-(add-to-list 'auto-mode-alist '("\\.fan\\'" . fan-mode))
+
+;; (load "~/.spacemacs.d/local/fan-mode_bak.el")
+;; (require 'fan-mode)
+;; (add-to-list 'auto-mode-alist '("\\.fan\\'" . fan-mode))
+
+;; (defun my-font-lock-comment-annotations ()
+  ;; "Highlight text between backticks in comments."
+  ;; (font-lock-add-keywords
+   ;; nil
+   ;; '(("\\<\\(`\\)\\(\\(?:\\(?:[^`\\]\\|\\\\.\\)*\\)\\(`\\)\\)\\>" 2 font-lock-string-face t))))
+
+;; (add-hook 'fan-mode-hook 'my-font-lock-comment-annotations)
+
+;; (add-hook 'fan-mode-hook
+          ;; (lambda ()
+            ;; (font-lock-add-keywords nil
+                                    ;; '(("`" . font-lock-constant-face)
+                                      ;; ("`" . font-lock-constant-face)))))
+
+            ;; (font-lock-add-keywords nil '(("\\*\\*+.*$" . font-lock-comment-face)))))
+            ;; (font-lock-add-keywords nil '(("\\(\\*\\*\\)\\(.*\\)$" 2 font-lock-comment-face t)))))
 
 
-;; ;; ;; ;; org mode setup
+;; ;; org mode setup
 
 ;; (setq org-agenda-files '("~/Documents/Notes"))
 ;; (setq org-default-notes-file "~/Documents/Notes/notes.org")
@@ -495,6 +520,9 @@
 ;; (setenv "PATH" (concat (getenv "PATH") ":/home/zhangxun.zx/bin/"))
 ;; (add-to-list 'tramp-remote-path "/bin:/usr/bin:/opt/repo-alibaba/bin/:~/bin"):
 
+;; (customize-set-variable 'tramp-default-method "rsync")
+;; (customize-set-variable 'tramp-copy-size-limit "rsync")
+
 ;; (require 'flycheck-objc-clang) ; Not necessary if using ELPA package
 ;; (with-eval-after-load 'flycheckeck-objc-clang-setup))
 
@@ -511,32 +539,34 @@
 ;; (setq hippie-expand-try-functions-list
 ;; '(yas/hippie-try-expand))
 
-;; function to implement a smarter TAB (EmacsWiki)
+;; tailwindcss enabled
+(load "~/.spacemacs.d/local/lsp-tailwindcss.el")
+(use-package lsp-tailwindcss
+  :init
+  (setq lsp-tailwindcss-add-on-mode t))
 
-;; (defun smart-tab ()
-  ;; ;; "This smart tab is minibuffer compliant: it acts as usual in
-    ;; ;; the minibuffer. Else, if mark is active, indents region. Else if
-    ;; ;; point is at the end of a symbol, expands it. Else indents the
-    ;; ;; current line."
-  ;; (interactive)
-  ;; (if (minibufferp)
-      ;; (unless (minibuffer-complete)
-        ;; (hippie-expand nil))
-    ;; (if mark-active
-        ;; (indent-region (region-beginning)
-                       ;; (region-end))
-      ;; (if (looking-at "\\_>")
-          ;; (hippie-expand nil)
-        ;; (indent-for-tab-command)))))
-;; (global-set-key (kbd "TAB") 'smart-tab)
+(global-set-key (kbd "s-1") 'open-current-file-external)
 
-;; (global-set-key (kbd "M-/") 'yas-hippie-try-expand)
+(load "~/.spacemacs.d/local/reveal-in-osx-finder.el")
+(spacemacs/set-leader-keys "fd" 'reveal-in-osx-finder)
+;; (global-set-key (kbd "s-R") 'reveal-in-osx-finder)
 
-;; (defun setup-flycheck-clang-project-path ()
-  ;; (let ((root (ignore-errors (projectile-project-root))))
-    ;; (when root
-      ;; (add-to-list
-       ;; (make-variable-buffer-local 'flycheck-clang-include-path)
-       ;; root))))
+(defun open-current-file-external ()
+  "Open the current file using the default external program."
+  (interactive)
+  (browse-url (buffer-file-name)))
 
-;; (add-hook 'c++-mode-hook 'setup-flycheck-clang-project-path)
+(defun browse-file-directory ()
+  "Open the current file's directory however the OS would."
+  (interactive)
+  (if default-directory
+      (browse-url-of-file (expand-file-name default-directory))
+    (error "No `default-directory' to open")))
+
+
+
+(with-eval-after-load 'markdown-mode
+  (unbind-key "M-<up>" 'markdown-mode-map)
+  (unbind-key "M-<down>" 'markdown-mode-map)
+  (unbind-key "M-<left>" 'markdown-mode-map)
+  (unbind-key "M-<right>" 'markdown-mode-map))
