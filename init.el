@@ -545,8 +545,58 @@ This function is called at the very end of Spacemacs initialization."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(evil-want-Y-yank-to-eol nil)
+ '(ignored-local-variable-values '((evil-shift-width . 2)))
  '(package-selected-packages
-   '(jsonrpc dart-mode evil-org gnuplot helm-org-rifle org-cliplink org-contrib org-download org-mime org-pomodoro alert log4e gntp org-present org-projectile org-category-capture org-rich-yank orgit-forge orgit ox-gfm lsp-dart flutter dart-server typescript-mode tern rjsx-mode import-js grizzl add-node-modules-path treemacs-all-the-icons systemd restclient-helm ob-restclient ob-http company-restclient restclient know-your-http-well seeing-is-believing rvm ruby-tools ruby-test-mode ruby-refactor ruby-hash-syntax rubocopfmt rubocop rspec-mode robe rbenv rake minitest helm-gtags ggtags enh-ruby-mode counsel-gtags chruby bundler inf-ruby yasnippet-snippets yapfify yaml-mode ws-butler writeroom-mode winum which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package unfill treemacs-projectile toc-org tagedit symon symbol-overlay swift-mode string-inflection spaceline-all-the-icons smeargle slim-mode scss-mode sass-mode restart-emacs rainbow-delimiters pytest pyenv-mode py-isort pug-mode prettier-js powershell popwin pippel pipenv pip-requirements phpunit phpcbf php-extras php-auto-yasnippets persp-mode pcre2el password-generator paradox overseer org-bullets open-junk-file ob-elixir nodejs-repl nginx-mode nameless mwim mvn move-text mmm-mode meghanada maven-test-mode markdown-toc magit-svn magit-gitflow macrostep lsp-ui lsp-treemacs lsp-python-ms lsp-java lorem-ipsum livid-mode live-py-mode link-hint json-navigator json-mode js2-refactor js-doc indent-guide importmagic impatient-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-rtags helm-pydoc helm-purpose helm-projectile helm-mode-manager helm-make helm-lsp helm-gitignore helm-git-grep helm-flx helm-descbinds helm-dash helm-ctest helm-css-scss helm-company helm-c-yasnippet helm-ag groovy-mode groovy-imports gradle-mode google-translate google-c-style golden-ratio gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md fuzzy font-lock+ flycheck-rtags flycheck-pos-tip flycheck-package flycheck-mix flycheck-credo flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-surround evil-numbers evil-nerd-commenter evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu ensime emmet-mode elisp-slime-nav editorconfig dumb-jump drupal-mode dotenv-mode doom-modeline disaster diminish devdocs define-word dash-at-point dap-mode cython-mode cquery cpp-auto-include counsel-projectile company-web company-tern company-statistics company-sourcekit company-rtags company-php company-lua company-lsp company-emacs-eclim company-c-headers company-anaconda column-enforce-mode cmake-mode cmake-ide clean-aindent-mode clang-format centered-cursor-mode ccls blacken auto-yasnippet auto-highlight-symbol auto-compile alchemist aggressive-indent ace-link ace-jump-helm-line ac-ispell))
+   '(jsonrpc dart-mode evil-org gnuplot helm-org-rifle org-cliplink org-contrib
+             org-download org-mime org-pomodoro alert log4e gntp org-present
+             org-projectile org-category-capture org-rich-yank orgit-forge orgit
+             ox-gfm lsp-dart flutter dart-server typescript-mode tern rjsx-mode
+             import-js grizzl add-node-modules-path treemacs-all-the-icons
+             systemd restclient-helm ob-restclient ob-http company-restclient
+             restclient know-your-http-well seeing-is-believing rvm ruby-tools
+             ruby-test-mode ruby-refactor ruby-hash-syntax rubocopfmt rubocop
+             rspec-mode robe rbenv rake minitest helm-gtags ggtags enh-ruby-mode
+             counsel-gtags chruby bundler inf-ruby yasnippet-snippets yapfify
+             yaml-mode ws-butler writeroom-mode winum which-key web-mode
+             web-beautify volatile-highlights vi-tilde-fringe uuidgen
+             use-package unfill treemacs-projectile toc-org tagedit symon
+             symbol-overlay swift-mode string-inflection spaceline-all-the-icons
+             smeargle slim-mode scss-mode sass-mode restart-emacs
+             rainbow-delimiters pytest pyenv-mode py-isort pug-mode prettier-js
+             powershell popwin pippel pipenv pip-requirements phpunit phpcbf
+             php-extras php-auto-yasnippets persp-mode pcre2el
+             password-generator paradox overseer org-bullets open-junk-file
+             ob-elixir nodejs-repl nginx-mode nameless mwim mvn move-text
+             mmm-mode meghanada maven-test-mode markdown-toc magit-svn
+             magit-gitflow macrostep lsp-ui lsp-treemacs lsp-python-ms lsp-java
+             lorem-ipsum livid-mode live-py-mode link-hint json-navigator
+             json-mode js2-refactor js-doc indent-guide importmagic
+             impatient-mode hungry-delete hl-todo highlight-parentheses
+             highlight-numbers highlight-indentation helm-xref helm-themes
+             helm-swoop helm-rtags helm-pydoc helm-purpose helm-projectile
+             helm-mode-manager helm-make helm-lsp helm-gitignore helm-git-grep
+             helm-flx helm-descbinds helm-dash helm-ctest helm-css-scss
+             helm-company helm-c-yasnippet helm-ag groovy-mode groovy-imports
+             gradle-mode google-translate google-c-style golden-ratio
+             gitignore-templates gitconfig-mode gitattributes-mode
+             git-timemachine git-messenger git-link gh-md fuzzy font-lock+
+             flycheck-rtags flycheck-pos-tip flycheck-package flycheck-mix
+             flycheck-credo flx-ido fill-column-indicator fancy-battery
+             eyebrowse expand-region evil-visualstar evil-visual-mark-mode
+             evil-unimpaired evil-tutor evil-textobj-line evil-surround
+             evil-numbers evil-nerd-commenter evil-matchit evil-magit
+             evil-lisp-state evil-lion evil-indent-plus evil-iedit-state
+             evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens
+             evil-args evil-anzu eval-sexp-fu ensime emmet-mode elisp-slime-nav
+             editorconfig dumb-jump drupal-mode dotenv-mode doom-modeline
+             disaster diminish devdocs define-word dash-at-point dap-mode
+             cython-mode cquery cpp-auto-include counsel-projectile company-web
+             company-tern company-statistics company-sourcekit company-rtags
+             company-php company-lua company-lsp company-emacs-eclim
+             company-c-headers company-anaconda column-enforce-mode cmake-mode
+             cmake-ide clean-aindent-mode clang-format centered-cursor-mode ccls
+             blacken auto-yasnippet auto-highlight-symbol auto-compile alchemist
+             aggressive-indent ace-link ace-jump-helm-line ac-ispell))
  '(standard-indent 2)
  '(warning-suppress-log-types '((lsp-mode) (emacs)))
  '(warning-suppress-types '((emacs))))

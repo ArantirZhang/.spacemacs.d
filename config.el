@@ -16,10 +16,10 @@
 ;; (require 'disable-mouse)
 ;; (global-disable-mouse-mode)
 ;; (mapc #'disable-mouse-in-keymap
-      ;; (list evil-motion-state-map
-            ;; evil-normal-state-map
-            ;; evil-visual-state-map
-            ;; evil-insert-state-map))
+;; (list evil-motion-state-map
+;; evil-normal-state-map
+;; evil-visual-state-map
+;; evil-insert-state-map))
 ;; (setq mouse-avoidance-mode 'banish)
 ;; Enabling only some features
 (require 'dap-cpptools)
@@ -99,8 +99,8 @@
 
 ;; Keep the Chinese character the same size as English character
 ;; (dolist (charset '(kana han cjk-misc bopomofo))
-  ;; (set-fontset-font (frame-parameter nil 'font) charset
-                    ;; (font-spec :family "SimHei" :size 10)))
+;; (set-fontset-font (frame-parameter nil 'font) charset
+;; (font-spec :family "SimHei" :size 10)))
 
 
 (setq create-lockfiles nil) ;; ignore warning "recentf mode: Non-character input-event"
@@ -132,7 +132,7 @@
 (add-hook 'dired-mode-hook
           (lambda ()
             (define-key dired-mode-map (kbd "<left>")
-              (lambda () (interactive) (find-alternate-file "..")))))
+                        (lambda () (interactive) (find-alternate-file "..")))))
 (define-key dired-mode-map (kbd "<right>") 'dired-find-alternate-file) ;; dired-view-file
 ;; (define-key dired-mode-map (kbd "<left>") 'dired-up-directory) ;; dired-up-directory
 
@@ -142,7 +142,7 @@
 ;; (define-key alchemist-iex-mode-map (kbd "s-;") 'alchemist-iex-clear-buffer)
 
 ;; (eval-after-load 'flycheck
-  ;; '(flycheck-credo-setup))
+;; '(flycheck-credo-setup))
 ;; (add-hook 'elixir-mode-hook 'flycheck-mode)
 ;; (setq flycheck-elixir-credo-strict t)
 
@@ -266,6 +266,8 @@
 (add-to-list 'auto-mode-alist '("\\.nit\\'" . niscript-mode))
 (add-to-list 'auto-mode-alist '("\\.niui\\'" . web-mode))
 (autoload 'niscript-mode "niScript" nil t)
+(add-hook 'niscript-mode-hook 'font-lock-mode) ;; enable the font-lock-mode for niScript
+
 
 (load "~/.spacemacs.d/local/hamfile.el")
 (autoload 'ham-mode "hamfile" nil t)
@@ -284,8 +286,8 @@
 (add-to-list 'auto-mode-alist '("\\.inl\\'" . c++-mode)) ;; load all .inl file as c++
 (add-to-list 'auto-mode-alist '("\\.mm\\'" . c++-mode)) ;; load all .mm file as objective-c file
 
-(add-to-list 'auto-mode-alist '("\\.xml\\'" . xml-mode)) 
-(add-to-list 'auto-mode-alist '("\\.XML\\'" . xml-mode)) 
+(add-to-list 'auto-mode-alist '("\\.xml\\'" . xml-mode))
+(add-to-list 'auto-mode-alist '("\\.XML\\'" . xml-mode))
 
 (with-eval-after-load ' projectile
   (push '("C" "h") projectile-other-file-alist))
@@ -458,21 +460,21 @@
 ;; (add-to-list 'auto-mode-alist '("\\.fan\\'" . fan-mode))
 
 ;; (defun my-font-lock-comment-annotations ()
-  ;; "Highlight text between backticks in comments."
-  ;; (font-lock-add-keywords
-   ;; nil
-   ;; '(("\\<\\(`\\)\\(\\(?:\\(?:[^`\\]\\|\\\\.\\)*\\)\\(`\\)\\)\\>" 2 font-lock-string-face t))))
+;; "Highlight text between backticks in comments."
+;; (font-lock-add-keywords
+;; nil
+;; '(("\\<\\(`\\)\\(\\(?:\\(?:[^`\\]\\|\\\\.\\)*\\)\\(`\\)\\)\\>" 2 font-lock-string-face t))))
 
 ;; (add-hook 'fan-mode-hook 'my-font-lock-comment-annotations)
 
 ;; (add-hook 'fan-mode-hook
-          ;; (lambda ()
-            ;; (font-lock-add-keywords nil
-                                    ;; '(("`" . font-lock-constant-face)
-                                      ;; ("`" . font-lock-constant-face)))))
+;; (lambda ()
+;; (font-lock-add-keywords nil
+;; '(("`" . font-lock-constant-face)
+;; ("`" . font-lock-constant-face)))))
 
-            ;; (font-lock-add-keywords nil '(("\\*\\*+.*$" . font-lock-comment-face)))))
-            ;; (font-lock-add-keywords nil '(("\\(\\*\\*\\)\\(.*\\)$" 2 font-lock-comment-face t)))))
+;; (font-lock-add-keywords nil '(("\\*\\*+.*$" . font-lock-comment-face)))))
+;; (font-lock-add-keywords nil '(("\\(\\*\\*\\)\\(.*\\)$" 2 font-lock-comment-face t)))))
 
 
 ;; ;; org mode setup
@@ -480,20 +482,20 @@
 ;; (setq org-agenda-files '("~/Documents/Notes"))
 ;; (setq org-default-notes-file "~/Documents/Notes/notes.org")
 ;; (setq org-capture-templates
-      ;; (quote (
-              ;; ("t" "Todo" entry (file "~/Documents/Notes/tasks.org")
-               ;; "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
-              ;; ("r" "Respond" entry (file "~/Documents/Notes/notes.org")
-               ;; "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
-              ;; ("n" "Note" entry (file "~/Documents/Notes/notes.org" "Notes")
-               ;; "* %? :NOTE:\n%T\n%a\n" :jump-to-captured)
-              ;; ("w" "org-protocol" entry (file "~/Documents/Notes/notes.org")
-               ;; "* TODO Review %c\n%U\n" :immediate-finish t)
-              ;; ("m" "Meeting" entry (file "~/Documents/Notes/notes.org")
-               ;; "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
-              ;; ("h" "Habit" entry (file "~/Documents/Notes/notes.org")
-               ;; "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n")
-              ;; )))
+;; (quote (
+;; ("t" "Todo" entry (file "~/Documents/Notes/tasks.org")
+;; "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
+;; ("r" "Respond" entry (file "~/Documents/Notes/notes.org")
+;; "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
+;; ("n" "Note" entry (file "~/Documents/Notes/notes.org" "Notes")
+;; "* %? :NOTE:\n%T\n%a\n" :jump-to-captured)
+;; ("w" "org-protocol" entry (file "~/Documents/Notes/notes.org")
+;; "* TODO Review %c\n%U\n" :immediate-finish t)
+;; ("m" "Meeting" entry (file "~/Documents/Notes/notes.org")
+;; "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
+;; ("h" "Habit" entry (file "~/Documents/Notes/notes.org")
+;; "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n")
+;; )))
 
 ;; (setf org-adapt-indentation t)
 ;; (require 'org-projectile)
@@ -501,15 +503,15 @@
 ;; (setq org-agenda-files (append org-agenda-files (org-projectile-todo-files)))
 ;; (setq org-projectile-capture-template "*** TODO %?\n %i\n %a")
 ;; (add-to-list 'org-capture-templates
-             ;; (org-projectile-project-todo-entry
-              ;; :capture-character "l"
-              ;; :capture-heading "Linked Project TODO"))
+;; (org-projectile-project-todo-entry
+;; :capture-character "l"
+;; :capture-heading "Linked Project TODO"))
 
 ;; ;; If you would like a TODO entry to automatically change to DONE when all children are done, you can use the following setup:
 ;; (defun org-summary-todo (n-done n-not-done)
-  ;; "Switch entry to DONE when all subentries are done, to TODO otherwise."
-  ;; (let (org-log-done org-log-states)   ; turn off logging
-    ;; (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+;; "Switch entry to DONE when all subentries are done, to TODO otherwise."
+;; (let (org-log-done org-log-states)   ; turn off logging
+;; (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
 
 ;; (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
 
